@@ -48,6 +48,7 @@ class _ConnectionBarState extends State<ConnectionBar> {
                 case BluetoothDeviceState.connected:
                   indicatorColor = Colors.green;
                   stateText = "Cihaz bağlı";
+                  ESP32.instance.discoverServices();
                   break;
                 default:
               }
@@ -141,7 +142,8 @@ class _ConnectionBarState extends State<ConnectionBar> {
                                   // Hiçbir zaman connect olmaz ise öylece kalıyor
                                   // Timeout olması halinde ise hata veriyor
                                   // Ya timeout olduğunda state beklemesi bir şekilde iptal edilecek
-                                  device.connect(timeout: const Duration(seconds: 3));
+                                  device.connect(
+                                      timeout: const Duration(seconds: 3), autoConnect: false);
                                   ESP32.instance.init(device);
                                   notifyParent();
 

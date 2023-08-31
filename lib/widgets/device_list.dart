@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +6,22 @@ import 'package:van_control/models/device.dart';
 import '../main.dart';
 import '../theme/color_schemes.g.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class Toggle {
+  final String command;
+  final int id;
+
+  Toggle(this.command, this.id);
+
+  Toggle.fromJson(Map<String, dynamic> json)
+      : command = json['name'],
+        id = json['email'];
+
+  Map<String, dynamic> toJson() => {
+        'command': command,
+        'id': id,
+      };
+}
 
 class DeviceList extends StatefulWidget {
   const DeviceList({super.key});
@@ -85,7 +100,8 @@ class _DeviceTileState extends State<DeviceTile> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        ESP32.instance.write("switch.${widget.device.key}.${widget.device.isActive ? 0 : 1}\n");
+        String pay = jsonEncode(Toggle("toggle", 1).toJson());
+        ESP32.instance.write(pay);
         widget.device.isActive = !widget.device.isActive;
         setState(() {});
       },
@@ -99,7 +115,7 @@ class _DeviceTileState extends State<DeviceTile> {
             children: [
               statusIndicator(widget.device.isActive ? Colors.green : Colors.red),
               SvgPicture.asset(
-                widget.device.deviceType == DeviceType.Lamba
+                widget.device.deviceType == DeviceType.cleanWater
                     ? "assets/icons/lamp.svg"
                     : "assets/icons/ac.svg",
                 color: lightColorScheme.onPrimaryContainer,

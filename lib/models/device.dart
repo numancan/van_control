@@ -4,8 +4,12 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 enum DeviceType {
-  Lamba,
-  Klima;
+  none,
+  wasteWater,
+  cleanWater,
+  dirtyWater,
+  solar,
+  life;
 
   String toJson() => name;
   static DeviceType fromJson(String json) => values.byName(json);
@@ -13,21 +17,22 @@ enum DeviceType {
 
 class Device {
   String name;
-  int key;
+  int id = -1;
   bool isActive = false;
   DeviceType deviceType;
 
-  Device({required this.name, required this.key, required this.deviceType});
-
-  factory Device.fromJson(Map<String, dynamic> json) {
-    return Device(
-        name: json['name'], key: json['key'], deviceType: DeviceType.fromJson(json['deviceType']));
+  Device({required this.name, required this.deviceType}) {
+    id = deviceType.index;
   }
 
-  Map<String, dynamic> toJson() => {"name": name, "key": key, "deviceType": deviceType.toJson()};
+  factory Device.fromJson(Map<String, dynamic> json) {
+    return Device(name: json['name'], deviceType: DeviceType.fromJson(json['deviceType']));
+  }
+
+  Map<String, dynamic> toJson() => {"name": name, "id": id, "deviceType": deviceType.toJson()};
 
   @override
-  toString() => "name: $name, key: $key, deviceType: $deviceType";
+  toString() => "name: $name, key: $id, deviceType: $deviceType";
 }
 
 class DeviceModel extends ChangeNotifier {

@@ -6,9 +6,16 @@ import 'package:provider/provider.dart';
 import 'package:van_control/models/device.dart';
 import '../theme/color_schemes.g.dart';
 
-class AddDeviceScreen extends StatelessWidget {
+class AddDeviceScreen extends StatefulWidget {
   AddDeviceScreen({super.key});
-  final Device _newDevice = Device(name: "", key: -1, deviceType: DeviceType.Lamba);
+
+  @override
+  State<AddDeviceScreen> createState() => _AddDeviceScreenState();
+}
+
+class _AddDeviceScreenState extends State<AddDeviceScreen> {
+  late DeviceType _deviceType;
+  late String _name;
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +36,9 @@ class AddDeviceScreen extends StatelessWidget {
               key: _formKey,
               child: Column(
                 children: [
-                  DevicesDropdown(onSaved: (value) => _newDevice.deviceType = value!),
+                  DevicesDropdown(onSaved: (value) => _deviceType = value!),
                   const SizedBox(height: 18),
-                  textField("İsim", (value) => _newDevice.name = value!),
-                  const SizedBox(height: 18),
-                  textField(
-                      "Cihaz Anahtarı",
-                      digitOnly: true,
-                      (value) => _newDevice.key = int.parse(value!)),
+                  textField("İsim", (value) => _name = value!),
                   const SizedBox(height: 18),
                   Align(
                     alignment: Alignment.centerRight,
@@ -46,7 +48,7 @@ class AddDeviceScreen extends StatelessWidget {
                           _formKey.currentState!.save();
 
                           DeviceModel deviceModel = context.read<DeviceModel>();
-                          deviceModel.add(_newDevice);
+                          deviceModel.add(Device(name: _name, deviceType: _deviceType));
                           Navigator.pop(context);
                         }
                       },

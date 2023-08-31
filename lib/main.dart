@@ -18,16 +18,22 @@ class ESP32 {
 
   Future? disconnect() => _device?.disconnect();
 
-  void init(BluetoothDevice bluetoothDevice) async {
-    _device = bluetoothDevice;
+  void init(BluetoothDevice bluetoothDevice) => _device = bluetoothDevice;
 
+  void deinit() => _device = null;
+
+  void discoverServices() async {
     List<BluetoothService> services = await _device!.discoverServices();
 
     _rxChar = services[2].characteristics[0];
     _txChar = services[2].characteristics[1];
+
+    _device?.requestMtu(223);
+    _rxChar?.setNotifyValue(true);
   }
 
-  void write(String data) async => await _txChar?.write(data.codeUnits);
+  Future write(String data) async => await _txChar?.write(data.codeUnits);
+  Future<List<int>?> read() async => await _rxChar?.read();
 }
 
 void main() => runApp(
